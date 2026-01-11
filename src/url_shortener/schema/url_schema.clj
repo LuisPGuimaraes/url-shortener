@@ -2,12 +2,14 @@
   (:require [clojure.spec.alpha :as s]))
 
 (s/def ::short-url string?)
+(s/def ::generated-short-code string?)
 (s/def ::original-url string?)
 (s/def ::inserted-at inst?)
 (s/def ::updated-at inst?)
 
 (s/def ::short-url-document
   (s/keys :req-un [::short-url
+                   ::generated-short-code
                    ::original-url
                    ::inserted-at
                    ::updated-at]))
@@ -27,9 +29,10 @@
 
 (defn create-document
   "Creates a new short URL document with inserted_at and updated_at timestamps"
-  [short-url original-url]
+  [short-url generated-short-code original-url]
   (let [now (java.util.Date.)]
     {:short-url short-url
+     :generated-short-code generated-short-code
      :original-url original-url
      :inserted-at now
      :updated-at now}))
