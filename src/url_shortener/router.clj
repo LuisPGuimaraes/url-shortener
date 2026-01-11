@@ -21,6 +21,12 @@
      }
     ]
     [
+      "/{short-code}"
+      {:get {:handler short-url-controller/redirect-handler
+              :summary "Redirect to the original URL"
+              :parameters {:path {:short-code string?}}}}
+    ]
+    [
       "/api"
       [
         "/shorten"
