@@ -9,7 +9,9 @@
     [ring/ring-jetty-adapter "1.9.0"]
     [metosin/reitit "0.5.12"]
     [metosin/muuntaja "0.6.8"]
-    [com.novemberain/monger "3.1.0"]
+
+    ;; MongoDB modern driver (Atlas compatible)
+    [org.mongodb/mongodb-driver-sync "4.11.1"]
   ]
   :main ^:skip-aot url-shortener.core
   :target-path "target/%s"

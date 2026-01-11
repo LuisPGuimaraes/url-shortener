@@ -1,24 +1,33 @@
 (ns url-shortener.repository.short-url-repository
   (:require [url-shortener.config.database :as db]
-            [url-shortener.schema.url-schema :as schema]
-            [monger.collection :as mc]))
+            [url-shortener.schema.url-schema :as schema])
+  (:import (org.bson Document)))
 
 (def collection-name "short_urls")
 
-(defn insert
-  "Inserts a short URL document into MongoDB after validation"
-  [document]
+(defn stringify-keys [m]
+  (into {}
+        (map (fn [[k v]]
+               [(name k) v])
+             m)))
+
+(defn ->doc [m]
+  (Document. (stringify-keys m)))
+
+(defn insert [document]
   (let [validation (schema/validate-short-url document)]
     (if (:valid? validation)
-      (mc/insert (db/get-db) collection-name document)
+      (let [coll (db/get-collection collection-name)]
+        (.insertOne coll (->doc document))
+        document)
       (throw (ex-info "Invalid document schema" validation)))))
 
-(defn find-by-short-url
-  "Finds a short URL by its short URL"
-  [short-url]
-  (mc/find-one-as-map (db/get-db) collection-name {:short-url short-url}))
+(defn find-by-short-url [short-url]
+  (let [coll (db/get-collection collection-name)
+        doc (.find coll (->doc {:short-url short-url}))]
+    (some-> doc .first (into {}))))
 
-(defn find-by-original-url
-  "Finds a short URL by its original URL"
-  [original-url]
-  (mc/find-one-as-map (db/get-db) collection-name {:original-url original-url}))
+(defn find-by-original-url [original-url]
+  (let [coll (db/get-collection collection-name)
+        doc (.find coll (->doc {:original-url original-url}))]
+    (some-> doc .first (into {}))))
