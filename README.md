@@ -15,10 +15,18 @@ The application allows users to convert long URLs into short links and access th
 
 ## Tech Stack
 - Clojure  
-- PostgreSQL  
+- MongoDB  
+- Ring/Reitit (Web framework)
+- Monger (MongoDB driver)
 
 ## How to Run
 1. Install Clojure  
-2. Configure the PostgreSQL database  
-3. Run the application  
-4. Access the API locally  
+2. Install and start MongoDB  
+3. Configure environment variables (see `env.example`):
+   - `MONGO_HOST` (default: localhost)
+   - `MONGO_PORT` (default: 27017)
+   - `MONGO_DB` (default: url_shortener)
+   - `MONGO_USER` (optional, for authentication)
+   - `MONGO_PASSWORD` (optional, for authentication)
+4. Run the application: `lein run`
+5. Access the API locally at `http://localhost:3000`  
