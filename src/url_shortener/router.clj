@@ -3,7 +3,8 @@
             [reitit.coercion.spec]
             [reitit.ring.coercion :as rrc]
             [reitit.ring.middleware.muuntaja :as muuntaja]
-            [muuntaja.core :as m]))
+            [muuntaja.core :as m]
+            [url-shortener.controller.short-url-controller :as short-url-controller]))
 
 (def app
   (ring/ring-handler router))
@@ -15,6 +16,15 @@
      {:get {:handler home-handler
             :summary "Home page"}
      }
+    ]
+    [
+      "/api"
+      [
+        "/shorten"
+        {:post {:handler short-url-controller/create-short-url-handler
+                :summary "Create a short URL from a long URL"
+                :parameters {:body {:url string?}}}}
+      ]
     ]
    ]
    {:data {:muuntaja m/instance
