@@ -7,6 +7,8 @@
     [org.clojure/clojure "1.12.2"]
     [ring "1.9.0"]
     [ring/ring-jetty-adapter "1.9.0"]
+    [metosin/reitit "0.5.12"]
+    [metosin/muuntaja "0.6.8"]
   ]
   :main ^:skip-aot url-shortener.core
   :target-path "target/%s"
