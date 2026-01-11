@@ -5,22 +5,34 @@
 (defn get-db-config
   "Gets database configuration from environment variables with defaults"
   []
-  {:host (or (System/getenv "MONGO_HOST") "localhost")
+  {:uri (System/getenv "MONGO_URI")
+   :host (or (System/getenv "MONGO_HOST") "localhost")
    :port (Integer/parseInt (or (System/getenv "MONGO_PORT") "27017"))
    :database (or (System/getenv "MONGO_DB") "url_shortener")
    :username (System/getenv "MONGO_USER")
    :password (System/getenv "MONGO_PASSWORD")})
 
 (defn create-connection
-  "Creates a MongoDB connection"
+  "Creates a MongoDB connection. Supports MongoDB Atlas (mongodb+srv://) or regular connections"
   []
   (let [config (get-db-config)
-        {:keys [host port database username password]} config]
-    (if (and username password)
+        {:keys [uri host port database username password]} config]
+    (cond
+      ;; MongoDB Atlas connection string (mongodb+srv://)
+      uri
+      (let [conn (mg/connect-via-uri uri)]
+        {:conn (:conn conn)
+         :db (:db conn)})
+      
+      ;; Connection with credentials
+      (and username password)
       (let [credentials (mcred/create username database (.toCharArray password))
             conn (mg/connect-with-credentials host port credentials)]
         {:conn conn
          :db (mg/get-db conn database)})
+      
+      ;; Connection without authentication (local development)
+      :else
       (let [conn (mg/connect {:host host :port port})]
         {:conn conn
          :db (mg/get-db conn database)}))))
