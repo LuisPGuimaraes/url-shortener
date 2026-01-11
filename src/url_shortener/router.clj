@@ -6,8 +6,11 @@
             [muuntaja.core :as m]
             [url-shortener.controller.short-url-controller :as short-url-controller]))
 
-(def app
-  (ring/ring-handler router))
+(defn home-handler
+  "Handler for the home page"
+  [request]
+  {:status 200
+   :body {:message "URL Shortener API - Powered by Luis Guimaraes"}})
 
 (def router
   (ring/router
@@ -36,11 +39,8 @@
                        rrc/coerce-request-middleware
                        rrc/coerce-response-middleware]}}))
 
-(defn home-handler
-  "Handler for the home page"
-  [request]
-  {:status 200
-   :body {:message "URL Shortener API - Powered by Luis Guimaraes"}})
+(def app
+  (ring/ring-handler router))
 
 
 
