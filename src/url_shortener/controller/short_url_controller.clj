@@ -8,7 +8,10 @@
         long-url (:url body)]
     (if long-url
       (let [result (short-url-service/create-short-url long-url)]
-        {:status 201
-         :body result})
+        (if (:error result)
+          {:status 409
+           :body {:error (:message result)}}
+          {:status 201
+           :body result}))
       {:status 400
        :body {:error "URL is required"}})))
